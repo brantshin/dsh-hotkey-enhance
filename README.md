@@ -47,8 +47,15 @@ DSH Desktop 2.0.18 的客户端跑在 **`web` runtime**：
 | `Ctrl+Shift+Tab` | 同上，反向（从最旧的一项开始） |
 | `Cmd+B` | 收起／展开左侧栏 |
 | `Cmd+,` | 打开设置 |
+| `Cmd+Opt+S` | 打开侧边对话（需 better-sidebar） |
+| `Cmd+J` | 新建终端 |
+| `Cmd+T` | 新建浏览器页面 |
 
-八条全部可在 **设置 → 通用 → 会话快捷键** 里录制改键。
+十一条全部可在 **设置 → 通用 → 桌面快捷键** 里录制改键。
+
+**依赖关系只说一次**：`⌘J` / `⌘T` 转发 DSH 自带的 `terminal.new` / `browser.new`，不依赖任何第三方插件；
+`⌘⌥S` 需要 [dsh-better-sidebar](https://www.npmjs.com/package/dsh-better-sidebar)。没装它时，设置卡片里这一行会
+**置灰并注明「需要安装 dsh-better-sidebar」**，按键也不会被吞——装上并重启后自动恢复可用。
 
 ## 浮窗切换器（Ctrl+Tab）
 
@@ -83,15 +90,16 @@ DSH Desktop 2.0.18 的客户端跑在 **`web` runtime**：
 - 列表上限 9 条；过滤规则与之前一致（跳过 `blank`、归档、`origin: "subagent"`）。
 - 每行显示：标题 · 「当前」徽标 · 相对时间（刚刚 / N 分钟前 / N 小时前 / N 天前）。
 
-## 两条「让位」规则
+## 五条「让位」规则
 
-`⌘B` 与 `⌘,` 在正常版 DSH 里本该由注册表负责（`desktop:macos` 默认值就是它们）。当前 Desktop 跑在 `web`
-runtime，这两个默认值不生效，插件才接管：
+`⌘B`、`⌘,`、`⌘J`、`⌘T` 在正常版 DSH 里本该由注册表负责（`desktop:macos` 默认值就是它们）。当前 Desktop 跑在
+`web` runtime，这些默认值不生效，插件才接管：
 
 | 键 | 实现 | 为什么这么做 |
 |---|---|---|
 | `⌘B` | 直接调 `ctx.layout.toggleSidebar()` | Web 白名单不允许单修饰键，注册表装不下这条；与系统自带 `⌘⌥B` 调用同一个方法 |
-| `⌘,` | 从 `ctx.shortcuts.catalog` 读出 `settings.open` 的**当前**绑定，合成 `keydown` 派发 | 不硬编码组合：你在设置里改过它的键，这里自动跟随；若它本来就绑在你的组合上，插件不接管，避免开两次设置 |
+| `⌘,` / `⌘J` / `⌘T` | 从 `ctx.shortcuts.catalog` 读出 `settings.open` / `terminal.new` / `browser.new` 的**当前**绑定，合成 `keydown` 派发 | 不硬编码组合：你在设置里改过它的键，这里自动跟随；若它本来就绑在你的组合上，插件不接管，避免开两次 |
+| `⌘⌥S` | 调 better-sidebar 的公开服务 `ctx.betterSidebar.openTab({ type: "sidechat" }, { sessionId })` | 侧边对话是 better-sidebar 的功能，它自己没有注册任何快捷键。服务是**可选**的，所以用 `ctx.get()` 读取而不是写进 `inject`——写进去的话没装它的用户整个插件都不会激活 |
 
 两条都只在 `web` runtime 生效；`desktop` runtime 会把它们原样让给注册表。
 改键时会先查注册表：**与内置命令冲突的组合会被拒绝**并提示占用者 id。

@@ -1,6 +1,6 @@
 {
   "name": "@brantshi1/dsh-hotkey-enhance",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Desktop keyboard enhancement for DSH: a Codex-style hold-to-preview session switcher plus the desktop keymap DSH never applies. DSH Desktop only.",
   "keywords": [
     "dsh",

@@ -125,6 +125,8 @@ const ctx = {
   layout: {
     toggleSidebar: () => calls.push("toggleSidebar"),
   },
+  // better-sidebar is optional: the plugin reads it through ctx.get.
+  get: (name) => (name === "betterSidebar" ? globalThis.__betterSidebar : undefined),
   effect: (fn) => fn(),
   slots: {
     inject: (_name, register) => {
@@ -141,6 +143,8 @@ const ctx = {
 
 let catalogRows = [
   { id: "settings.open", binding: { code: "Comma", modifiers: ["alt", "meta"] } },
+  { id: "terminal.new", binding: { code: "Backquote", modifiers: ["control"] } },
+  { id: "browser.new", binding: { code: "KeyT", modifiers: ["alt", "meta"] } },
 ];
 ctx.shortcuts = {
   runtime: "web",
@@ -237,6 +241,9 @@ const ACTION_ORDER = [
   "cyclePrev",
   "sidebarLeft",
   "settings",
+  "sidebarSidechat",
+  "sidebarTerminal",
+  "sidebarBrowser",
 ];
 const cardRecording = () => {
   const keys = walk(cardTree()).filter((n) => n.type === "kbd").map(textOf);
@@ -352,7 +359,7 @@ check(
 up({ code: "ControlLeft", key: "Control", ctrlKey: false });
 
 // ---- settings card still works ------------------------------------------
-check("settings card lists eight bindings", buttons(cardTree(), "修改").length === 8);
+check("settings card lists eleven bindings", buttons(cardTree(), "修改").length === 11);
 buttons(cardTree(), "修改")[4].props.onClick(); // cycle
 check("recording starts", walk(cardTree()).some((n) => n.type === "kbd" && textOf(n) === "按下…"));
 down({ code: "Escape", key: "Escape" });
@@ -380,7 +387,11 @@ check(
   r2.calls.length === 0,
   r2.calls.join(),
 );
-catalogRows = [{ id: "settings.open", binding: { code: "Comma", modifiers: ["alt", "meta"] } }];
+catalogRows = [
+  { id: "settings.open", binding: { code: "Comma", modifiers: ["alt", "meta"] } },
+  { id: "terminal.new", binding: { code: "Backquote", modifiers: ["control"] } },
+  { id: "browser.new", binding: { code: "KeyT", modifiers: ["alt", "meta"] } },
+];
 
 // ---- desktop runtime defers to the registry ------------------------------
 {
@@ -430,7 +441,11 @@ catalogRows = [{ id: "settings.open", binding: { code: "Comma", modifiers: ["alt
     walk(cardTree()).some((n) => textOf(n).includes("sidebar.right.toggle")),
   );
   press2("keydown", { code: "Escape", key: "Escape" });
-  catalogRows = [{ id: "settings.open", binding: { code: "Comma", modifiers: ["alt", "meta"] } }];
+  catalogRows = [
+  { id: "settings.open", binding: { code: "Comma", modifiers: ["alt", "meta"] } },
+  { id: "terminal.new", binding: { code: "Backquote", modifiers: ["control"] } },
+  { id: "browser.new", binding: { code: "KeyT", modifiers: ["alt", "meta"] } },
+];
 }
 
 // ---- outside the Desktop shell the plugin stays inert --------------------
@@ -480,6 +495,70 @@ catalogRows = [{ id: "settings.open", binding: { code: "Comma", modifiers: ["alt
   handlers.blur.clear();
   globalThis.__exports.apply(ctx);
 }
+
+// ---- side chat / terminal / browser -------------------------------------
+globalThis.__betterSidebar = {
+  openTab: (seed, scope) => calls.push(`openTab:${seed.type}:${scope?.sessionId}`),
+};
+
+let r4 = down({ code: "KeyS", metaKey: true, altKey: true });
+check("Cmd+Alt+S opens side chat", r4.calls.join() === "openTab:sidechat:s2", r4.calls.join());
+
+r4 = down({ code: "KeyJ", metaKey: true });
+check("Cmd+J replays terminal.new", r4.calls.join() === "dispatch:Backquote:ctrl", r4.calls.join());
+
+r4 = down({ code: "KeyT", metaKey: true });
+check("Cmd+T replays browser.new", r4.calls.join() === "dispatch:KeyT:meta+alt", r4.calls.join());
+
+// availability B: the row shows why it cannot fire
+check(
+  "an available side-chat row carries no reason",
+  !walk(cardTree()).some((n) => textOf(n) === "需要安装 dsh-better-sidebar"),
+);
+
+globalThis.__betterSidebar = undefined;
+check(
+  "missing better-sidebar is visible in the card",
+  walk(cardTree()).some((n) => textOf(n) === "需要安装 dsh-better-sidebar"),
+);
+check(
+  "the unavailable row disables its buttons",
+  buttons(cardTree(), "修改")[8].props.disabled === true,
+  String(buttons(cardTree(), "修改")[8].props.disabled),
+);
+
+r4 = down({ code: "KeyS", metaKey: true, altKey: true });
+check(
+  "side chat is a no-op without better-sidebar",
+  r4.calls.length === 0 && !r4.consumed,
+  r4.calls.join(),
+);
+globalThis.__betterSidebar = {
+  openTab: (seed, scope) => calls.push(`openTab:${seed.type}:${scope?.sessionId}`),
+};
+
+// replay yields when the registry already owns our chord
+catalogRows = [
+  ...catalogRows.filter((row) => row.id !== "browser.new"),
+  { id: "browser.new", binding: { code: "KeyT", modifiers: ["meta"] } },
+];
+r4 = down({ code: "KeyT", metaKey: true });
+check("browser replay yields when the registry owns the chord", r4.calls.length === 0, r4.calls.join());
+catalogRows = [
+  ...catalogRows.filter((row) => row.id !== "browser.new"),
+  { id: "browser.new", binding: { code: "KeyT", modifiers: ["alt", "meta"] } },
+];
+
+// a missing registry command makes the row unavailable instead of silently dead
+catalogRows = catalogRows.filter((row) => row.id !== "terminal.new");
+check(
+  "a missing command is explained in the card",
+  walk(cardTree()).some((n) => textOf(n).includes("terminal.new")),
+);
+catalogRows = [
+  ...catalogRows,
+  { id: "terminal.new", binding: { code: "Backquote", modifiers: ["control"] } },
+];
 
 // ---- persisted override still respected ---------------------------------
 storage.set(

@@ -27,10 +27,13 @@ This plugin fills exactly those two gaps, and nothing else.
 | `⌘D` | Pin / unpin the current session |
 | `⌘B` | Toggle the left sidebar |
 | `⌘,` | Open settings |
+| `Cmd+Opt+S` | Open a side chat (needs better-sidebar) |
+| `Cmd+J` | New terminal |
+| `Cmd+T` | New browser page |
 | `Ctrl+Tab` | Open the recent-session overlay; each tap moves the highlight |
 | `Ctrl+Shift+Tab` | Same, reverse (starts on the oldest entry) |
 
-All eight are remappable in **Settings → General → Session shortcuts** (record, per-item reset, reset all).
+All eleven are remappable in **Settings → General → Desktop shortcuts** (record, per-item reset, reset all).
 On Windows/Linux `⌘` becomes `Ctrl`.
 
 ### The session switcher
@@ -99,6 +102,14 @@ across reloads, and both degradation paths (missing React seed, non-Electron hos
 ```bash
 pnpm test        # or: node tests/hotkey-enhance.test.mjs
 ```
+
+## Optional dependency
+
+`Cmd+J` and `Cmd+T` replay DSH's own `terminal.new` / `browser.new`, so they depend on nothing but DSH itself.
+`Cmd+Opt+S` needs [dsh-better-sidebar](https://www.npmjs.com/package/dsh-better-sidebar): the service is read
+through `ctx.get()` rather than declared in `inject`, so a missing better-sidebar leaves the other ten shortcuts
+working. In the settings card that one row renders greyed out with "needs dsh-better-sidebar installed", and the
+chord is not swallowed; it becomes usable again after installing the plugin and restarting.
 
 ## Limitations
 
