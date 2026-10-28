@@ -1,0 +1,66 @@
+{
+  "name": "dsh-hotkey-enhance",
+  "version": "0.1.0",
+  "description": "Desktop keyboard enhancement for DSH: a Codex-style hold-to-preview session switcher plus the desktop keymap DSH never applies. DSH Desktop only.",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "hotkeys",
+    "shortcuts",
+    "keyboard",
+    "session-switcher",
+    "desktop"
+  ],
+  "license": "MIT",
+  "author": "brantshin <brantshi1@gmail.com>",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "tests",
+    "cordis.patch.yml",
+    "README.md",
+    "README.en.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node tests/hotkey-enhance.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brantshin/dsh-hotkey-enhance.git"
+  },
+  "homepage": "https://github.com/brantshin/dsh-hotkey-enhance#readme",
+  "bugs": {
+    "url": "https://github.com/brantshin/dsh-hotkey-enhance/issues"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-shortcuts",
+        "@deepseek-ai/dsh-client-ui-workspace",
+        "@deepseek-ai/dsh-api-session-controller",
+        "@deepseek-ai/dsh-api-workspace-controller"
+      ]
+    },
+    "compatibility": {
+      "dshReleases": {
+        "0.2.1-rc.2": "compatible"
+      }
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
