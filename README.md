@@ -127,27 +127,30 @@ runtime，这两个默认值不生效，插件才接管：
   若将来 DSH 修好 `data-platform` / 键盘桥，使 `desktop:*` 生效，本插件会与内置 `session.new` 撞键，
   届时需要**只在 `web` runtime 下启用 `Cmd+N`**（`apply` 里已有 `runtime` 可判断）。
 
-## 安装（desktop profile）
+## 安装
 
 ```bash
-# 1) profile 依赖：~/.dsh/profiles/desktop/package.json
-#      dependencies:        "@brantshi1/dsh-hotkey-enhance": "link:/Users/brant/dsh-plugins/dsh-hotkey-enhance"
-#      dsh.profile.bundles: "@brantshi1/dsh-hotkey-enhance"
-# 2) 安装
-cd ~/.dsh/profiles/desktop
-~/.dsh/dsh-runtimes/dsh-plugin-desktop-primary-runtime/dependencies/node/bin/node \
-  ~/.dsh/dsh-runtimes/dsh-plugin-desktop-primary-runtime/dependencies/pnpm/bin/pnpm.cjs install
-# 3) 重启 DSH Desktop（客户端支持 HMR：改 lib/client.js 会自动重载，不必重启）
+dsh plugin --profile desktop add @brantshi1/dsh-hotkey-enhance
 ```
 
-## 卸载 / 回滚
+然后重启 DSH Desktop。**设置 → 通用** 底部应出现「桌面快捷键」一节。
 
-1. 从 `~/.dsh/profiles/desktop/package.json` 删除 `dependencies` 与 `dsh.profile.bundles` 里的
-   `@brantshi1/dsh-hotkey-enhance`；
-2. 在 profile 目录再跑一次 `pnpm install`；
-3. 重启。
+从源码装（本地开发用，改动即时生效）：
 
-改动前的 profile 清单备份在 `package.json.bak-before-session-keys-*`。
+```bash
+dsh plugin --profile desktop add /path/to/dsh-hotkey-enhance
+```
+
+## 卸载
+
+```bash
+dsh plugin --profile desktop remove @brantshi1/dsh-hotkey-enhance
+```
+
+手动回滚：从 `~/.dsh/profiles/desktop/package.json` 的 `dependencies` 与 `dsh.profile.bundles`
+里删掉该包名，在 profile 目录执行一次 `pnpm install`，然后重启。
+
+已录制的键位保存在 `localStorage`（`dsh.sessionkeys.bindings.v1`），卸载不会清除；重装后仍在。
 
 ## 验证
 
