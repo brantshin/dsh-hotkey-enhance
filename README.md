@@ -1,5 +1,6 @@
 # dsh-hotkey-enhance
 
+> npm: **`@brantshi1/dsh-hotkey-enhance`**
 [English](README.en.md) | 中文
 
 DSH Desktop 的键盘增强插件：Codex 式的会话切换手感 + 一套 DSH 2.0.18 从未生效过的桌面键位。
@@ -130,8 +131,8 @@ runtime，这两个默认值不生效，插件才接管：
 
 ```bash
 # 1) profile 依赖：~/.dsh/profiles/desktop/package.json
-#      dependencies:        "dsh-hotkey-enhance": "link:/Users/brant/dsh-plugins/dsh-hotkey-enhance"
-#      dsh.profile.bundles: "dsh-hotkey-enhance"
+#      dependencies:        "@brantshi1/dsh-hotkey-enhance": "link:/Users/brant/dsh-plugins/dsh-hotkey-enhance"
+#      dsh.profile.bundles: "@brantshi1/dsh-hotkey-enhance"
 # 2) 安装
 cd ~/.dsh/profiles/desktop
 ~/.dsh/dsh-runtimes/dsh-plugin-desktop-primary-runtime/dependencies/node/bin/node \
@@ -142,7 +143,7 @@ cd ~/.dsh/profiles/desktop
 ## 卸载 / 回滚
 
 1. 从 `~/.dsh/profiles/desktop/package.json` 删除 `dependencies` 与 `dsh.profile.bundles` 里的
-   `dsh-hotkey-enhance`；
+   `@brantshi1/dsh-hotkey-enhance`；
 2. 在 profile 目录再跑一次 `pnpm install`；
 3. 重启。
 

@@ -1,5 +1,5 @@
 {
-  "name": "dsh-hotkey-enhance",
+  "name": "@brantshi1/dsh-hotkey-enhance",
   "version": "0.1.0",
   "description": "Desktop keyboard enhancement for DSH: a Codex-style hold-to-preview session switcher plus the desktop keymap DSH never applies. DSH Desktop only.",
   "keywords": [
@@ -13,6 +13,9 @@
     "desktop"
   ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "brantshin <brantshi1@gmail.com>",
   "type": "module",
   "main": "lib/index.js",

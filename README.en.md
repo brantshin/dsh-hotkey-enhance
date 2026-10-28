@@ -1,5 +1,6 @@
 # dsh-hotkey-enhance
 
+> npm: **`@brantshi1/dsh-hotkey-enhance`**
 Desktop keyboard enhancement for DSH — a **Codex-style session switcher** (hold `Ctrl`, tap `Tab`, release to
 commit) plus the desktop keymap that DSH 2.0.18 never applies.
 
@@ -78,7 +79,7 @@ take). Consequences, stated up front:
 ## Install
 
 ```bash
-dsh plugin --profile desktop add dsh-hotkey-enhance
+dsh plugin --profile desktop add @brantshi1/dsh-hotkey-enhance
 ```
 
 Or from source:
